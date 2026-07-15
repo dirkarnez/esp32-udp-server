@@ -1,0 +1,13 @@
+# This file was generated using idf.py save-defconfig or menuconfig [D] key. It can be edited manually.
+# Espressif IoT Development Framework (ESP-IDF) 6.2.0 Project Minimal Configuration
+#
+# default:
+
+CONFIG_IDF_TARGET="esp32c5"
+
+# CONFIG_EXAMPLE_WIFI_SSID_PWD_FROM_STDIN=y
+CONFIG_EXAMPLE_IPV4=y
+CONFIG_EXAMPLE_IPV6=y
+CONFIG_ESP_MAXIMUM_RETRY=5
+CONFIG_ESP_WIFI_AUTH_WPA_WPA2_PSK=y
+# CONFIG_ESP_STATION_EXAMPLE_WPA3_SAE_PWE_HUNT_AND_PECK is not set
