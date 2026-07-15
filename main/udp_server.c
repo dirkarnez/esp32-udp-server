@@ -237,7 +237,6 @@ static void udp_server_task(void *pvParameters)
         if (flags < 0) {
             flags = 0;
         }
-
         if (fcntl(sock, F_SETFL, flags | O_NONBLOCK) == -1) {
             ESP_LOGE(TAG, "Unable to set socket non blocking");
         } else {
@@ -269,22 +268,25 @@ static void udp_server_task(void *pvParameters)
         msg.msg_name = (struct sockaddr *)&source_addr;
         msg.msg_namelen = socklen;
 #endif
-
+        ESP_LOGI(TAG, "Waiting for data");
+        
         while (1) {
-            ESP_LOGI(TAG, "Waiting for data");
 #if defined(CONFIG_LWIP_NETBUF_RECVINFO) && !defined(CONFIG_EXAMPLE_IPV6)
             int len = recvmsg(sock, &msg, 0);
 #else
             int len = recvfrom(sock, rx_buffer, sizeof(rx_buffer) - 1, 0, (struct sockaddr *)&source_addr, &socklen);
 #endif
             // Error occurred during receiving
-            if (len < 0) {
-                ESP_LOGE(TAG, "recvfrom failed: errno %d", errno);
-                break;
-            } else if (len == 0) {
-                ESP_LOGI(TAG, "No data, yield and try later");
-                vTaskDelay(pdMS_TO_TICKS(50));
-                continue;
+            if (len <= 0) {
+                if (errno == EWOULDBLOCK || errno == EAGAIN) {
+                    // No data available right now, safely proceed with other tasks
+                    vTaskDelay(pdMS_TO_TICKS(50));
+                    continue;
+                } else {
+                    // A real error occurred
+                    ESP_LOGE(TAG, "recvfrom failed: errno %d", errno);
+                    break;
+                }
             } // Data received
             else {
                 // Get the sender's ip address as string
