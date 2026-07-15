@@ -3,7 +3,7 @@ docker run -t \
 -v "$PWD:/app/project" \
 -w "/app/project" \
 espressif/idf:latest /bin/bash -c 'git config --global --add safe.directory "*" &&  idf.py build'
-idf.py  build
+# idf.py  build
 # idf.py set-target esp32c5 &&
 # idf.py fullclean && 
 # idf.py menuconfig && 
